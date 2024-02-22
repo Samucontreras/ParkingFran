@@ -5,6 +5,9 @@ body {
     height: 100vh;
 }
 
+h1 {
+    color: white;
+}
 /* Estilos para las plazas de aparcamiento */
 .plaza {
     margin: 5px; /* Margen entre las plazas */
