@@ -47,7 +47,12 @@ app.get('/sacarCoche', async (req, res) => {
 });
 
 app.get('/obtenerGanancias', async (req, res) => {
-    
+    try {
+        const ganancias = await dbManager.getMoney();
+        res.status(200).json({ ganancias: ganancias });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
 const PORT =  3000;

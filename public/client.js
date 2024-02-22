@@ -88,7 +88,7 @@ async function cocheEntra() {
         if (response.id_plaza) {
             // Representar la plaza como ocupada
             setOccuped(response.id_plaza);
-            alert('Ha entrado un coche de matricula ' + response.Matricula + ' en la plaza ' + response.id_plaza);
+            //alert('Ha entrado un coche de matricula ' + response.Matricula + ' en la plaza ' + response.id_plaza);
         }
         else
             console.log(response.status);
@@ -106,7 +106,7 @@ async function cocheSale() {
         //Si devuelve una id plaza la pone libre sino imprime por consola el mensaje
         if (response.id_plaza) {
             setFree(response.id_plaza);
-            alert('Ha salido un coche de la plaza ' + response.id_plaza);
+            //alert('Ha salido un coche de la plaza ' + response.id_plaza);
         }
         else
             console.log(response.message);
@@ -116,11 +116,60 @@ async function cocheSale() {
     }
 }
 
+// Función para obtener las ganancias totales
+async function obtenerGanancias() {
+    try {
+        const response = await fetch('http://localhost:3000/obtenerGanancias', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            alert('Las ganancias totales son: ' + data.ganancias);
+        } else {
+            throw new Error('Error al obtener las ganancias');
+        }
+    } catch (error) {
+        console.error('Error al obtener las ganancias:', error.message);
+    }
+}
+
+// Declarar interval fuera de la función iniciarAutomaticamente
+let interval;
+
+// Función para iniciar automáticamente la entrada y salida de coches
+async function iniciarAutomaticamente() {
+    try {
+        // Bucle para simular la entrada y salida de múltiples coches
+        interval = setInterval(async () => {
+            // Entrar un coche automáticamente
+            await cocheEntra();
+
+            // Esperar 60 segundos antes de salir el coche automáticamente
+            await new Promise(resolve => setTimeout(resolve, 60000));
+            await cocheSale();
+        }, 8000); // Intervalo de 60 segundos para agregar un coche cada 8 segundos y que salga cada 60 segundos
+    } catch (error) {
+        console.error('Error al iniciar automáticamente:', error.message);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('entrar_boton').addEventListener('click', () => {
         cocheEntra();
     });
     document.getElementById('salir_boton').addEventListener('click', () => {
         cocheSale();
+    });
+    document.getElementById('obtener_ganancias_boton').addEventListener('click', () => {
+        obtenerGanancias();
+    });
+    document.getElementById('iniciar_boton').addEventListener('click', () => {
+        iniciarAutomaticamente();
+    });
+    document.getElementById('detener_boton').addEventListener('click', () => {
+        clearInterval(interval); // Detener el intervalo
     });
 });

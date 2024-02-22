@@ -53,32 +53,37 @@ async function cocheEntra() {
 }
 
 async function cocheSale() {
+    try {
+        // Traer los datos de las plazas
+        var plazasEstacionamiento = await dbManager.getPlazas();
 
-    // Traer los datos de las plazas
-    var plazasEstacionamiento = dbManager.getPlazas();
+        // Filtrar para conseguir un array con las plazas ocupadas
+        const plazasOcupadas = plazasEstacionamiento.filter(plaza => plaza.Disponible === 0);
+        // Si hay plazas ocupadas se ejecuta
+        if (plazasOcupadas.length > 0) {
 
-    // Filtrar para conseguir un array con las plazas ocupadas
-    const plazasOcupadas = plazasEstacionamiento.filter(plaza => plaza.Disponible === 0);
-    // Si hay plazas ocupadas se ejecuta
-    if (plazasOcupadas.length > 0) {
+            // Elegir una plaza aleatoria entre las plazas ocupadas
+            const plazaAleatoria = plazasOcupadas[Math.floor(Math.random() * plazasOcupadas.length)].id_plaza;
 
-        // Elegir una plaza aleatoria entre las plazas ocupadas
-        const plazaAleatoria = plazasOcupadas[Math.floor(Math.random() * plazasOcupadas.length)].id_plaza;
+            // Sacar el coche de la plaza en la bbdd
+            await dbManager.exitCar(plazaAleatoria);
 
-        // Sacar el coche de la plaza en la bbdd
-        await dbManager.exitCar(plazaAleatoria);
+            // Actualizar la información del DataBase Manager
+            await dbManager.updatePlazas();
 
-        // Actualizar la información del DataBase Manager
-        await dbManager.updatePlazas();
+            // Imprimir por consola la acción
+            console.log('Coche saliendo de la plaza:', plazaAleatoria);
 
-        // Imprimir por consola la acción
-        console.log('Coche saliendo de la plaza:', plazaAleatoria);
-
-        return ({ id_plaza: plazaAleatoria });
-    } else {
-        console.log('El parking está vacío.');
+            return ({ id_plaza: plazaAleatoria });
+        } else {
+            console.log('El parking está vacío.');
+        }
+    } catch (error) {
+        console.error('Error al ejecutar cocheSale:', error);
+        // Aquí puedes manejar el error de acuerdo a tus necesidades
     }
 }
+
 
 
 module.exports = { cocheEntra, cocheSale };
