@@ -150,7 +150,7 @@ async function iniciarAutomaticamente() {
             // Esperar 60 segundos antes de salir el coche automáticamente
             await new Promise(resolve => setTimeout(resolve, 60000));
             await cocheSale();
-        }, 8000); // Intervalo de 60 segundos para agregar un coche cada 8 segundos y que salga cada 60 segundos
+        }, 6000); // Intervalo de 60 segundos para agregar un coche cada 6 segundos y que salga cada 60 segundos
     } catch (error) {
         console.error('Error al iniciar automáticamente:', error.message);
     }
